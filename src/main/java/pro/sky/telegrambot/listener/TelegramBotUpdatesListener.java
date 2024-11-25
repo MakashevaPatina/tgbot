@@ -76,20 +76,4 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             telegramBot.execute(new SendMessage(chatId, "Произошла ошибка при обработке сообщения."));
         }
     }
-
-    @Scheduled(cron = "0 0/1 * * * *")
-    public void sendNotifications() {
-        LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
-
-        List<NotificationTask> notificationTaskList = service.getNotificationTasksByTaskTime(now);
-        notificationTaskList.forEach(task -> {
-            try {
-                SendMessage message = new SendMessage(task.getChatId(), task.getMessageText());
-                telegramBot.execute(message);
-                logger.info("Уведомление отправлено для задачи: {}", task);
-            } catch (Exception e) {
-                logger.error("Ошибка при отправке уведомления для задачи: {}", task, e);
-            }
-        });
-    }
 }
